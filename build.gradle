@@ -16,6 +16,7 @@ configurations {
 
 repositories {
 	mavenCentral()
+	jcenter()
 }
 
 dependencies {
@@ -26,8 +27,11 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	runtimeOnly 'mysql:mysql-connector-java'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	implementation 'io.springfox:springfox-boot-starter:3.0.0'
+	implementation 'org.flywaydb:flyway-core'
 }
 
 test {
 	useJUnitPlatform()
 }
+
