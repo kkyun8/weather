@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -22,4 +23,12 @@ public class WeatherStatusEntity {
   @Column private String description;
 
   @Column private String weatherStatusIconId;
+
+  @Builder
+  public WeatherStatusEntity(Long id, String main, String description, String weatherStatusIconId) {
+    this.id = id;
+    this.main = main;
+    this.description = description;
+    this.weatherStatusIconId = weatherStatusIconId;
+  }
 }

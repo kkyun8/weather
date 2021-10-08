@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,11 +15,18 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "weatherStatus")
+@Table(name = "weatherStatusIcon")
 public class WeatherStatusIconEntity {
   @Id private String id;
 
   @Column @NotNull private String description;
 
   @Column @NotNull private String descriptionJp;
+
+  @Builder
+  public WeatherStatusIconEntity(String id, String description, String descriptionJp) {
+    this.id = id;
+    this.description = description;
+    this.descriptionJp = descriptionJp;
+  }
 }
