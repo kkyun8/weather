@@ -1,6 +1,8 @@
 plugins {
     id 'org.springframework.boot' version '2.5.1'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    // intelliJ Grandle Toggle Offline Mode OFF
+    id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
     id 'java'
 }
 
@@ -20,17 +22,39 @@ repositories {
 }
 
 dependencies {
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'mysql:mysql-connector-java'
+    implementation 'com.googlecode.json-simple:json-simple:1.1.1'
+
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
-    annotationProcessor 'org.projectlombok:lombok'
-    implementation 'mysql:mysql-connector-java'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
     developmentOnly 'io.springfox:springfox-boot-starter:3.0.0'
-    implementation 'com.googlecode.json-simple:json-simple:1.1.1'
-}
+    annotationProcessor 'org.projectlombok:lombok'
 
+    implementation 'com.querydsl:querydsl-jpa'
+
+}
+//querydsl 追加
+def querydslDir = "$buildDir/generated/querydsl"
+
+querydsl {
+    jpa = true
+    querydslSourcesDir = querydslDir
+}
+//エディター設定
+sourceSets {
+    main.java.srcDir querydslDir
+}
+//コンパイルクラスパスに設定
+configurations {
+    querydsl.extendsFrom compileClasspath
+}
+//アノテーションプロセッサに合わせてビルド設定
+compileQuerydsl {
+    options.annotationProcessorPath = configurations.querydsl
+}
 test {
     useJUnitPlatform()
 }
