@@ -1,5 +1,10 @@
 package com.main.weather.controller;
 
+import static com.main.weather.entity.QFavoriteEntity.favoriteEntity;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -8,7 +13,9 @@ import com.main.weather.entity.AddressEmbedded;
 import com.main.weather.entity.CityEntity;
 import com.main.weather.entity.FavoriteEntity;
 import com.main.weather.entity.UserEntity;
+import com.main.weather.repository.FavoriteQueryRepository;
 import com.main.weather.repository.FavoriteRepository;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -29,6 +36,7 @@ public class FavoriteControllerTests {
   @Autowired FavoriteController favoriteController;
 
   @MockBean FavoriteRepository favoriteRepository;
+  @MockBean FavoriteQueryRepository favoriteQueryRepository;
 
   private AddressEmbedded favoriteAddress =
       new AddressEmbedded("one1", "two1", "city1", "state1", "postalcode1", "country1");
@@ -64,11 +72,14 @@ public class FavoriteControllerTests {
     given(favoriteRepository.save(favorite)).willReturn(favorite);
     given(favoriteRepository.findAll()).willReturn(list);
     given(favoriteRepository.findById(id)).willReturn(java.util.Optional.of(favorite));
+
+    given(favoriteQueryRepository.fetchByLimitOffset(anyInt(), anyInt(), anyString(), anyBoolean()))
+        .willReturn(list);
   }
 
   @Test
   public void find_all() throws Exception {
-    favoriteController.findAll();
+    favoriteController.findAll(0, 5, "createAt", true);
   }
 
   @Test
