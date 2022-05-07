@@ -41,7 +41,7 @@ public class OpenWeatherController {
     int responseCode = connection.getResponseCode();
 
     if (responseCode != HttpURLConnection.HTTP_OK) {
-      throw new Exception("http not ok");
+      throw new Exception("http not ok code:" + responseCode);
     }
 
     InputStreamReader isr = new InputStreamReader(connection.getInputStream());
