@@ -12,6 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.main.weather.entity.AddressEmbedded;
 import com.main.weather.entity.CityEntity;
 import com.main.weather.entity.FavoriteEntity;
+import com.main.weather.entity.Role;
 import com.main.weather.entity.UserEntity;
 import com.main.weather.repository.FavoriteQueryRepository;
 import com.main.weather.repository.FavoriteRepository;
@@ -38,15 +39,19 @@ public class FavoriteControllerTests {
   @MockBean FavoriteRepository favoriteRepository;
   @MockBean FavoriteQueryRepository favoriteQueryRepository;
 
-  private AddressEmbedded favoriteAddress =
-      new AddressEmbedded("one1", "two1", "city1", "state1", "postalcode1", "country1");
-
+  private AddressEmbedded favoriteAddress = new AddressEmbedded();
   private FavoriteEntity favorite = new FavoriteEntity(Long.valueOf("1"), favoriteAddress);
 
   private Long id = Long.valueOf("1");
 
   @Before
   public void setup() {
+    favoriteAddress.setAddress1("favoriteOne1");
+    favoriteAddress.setAddress2("favoriteTwo1");
+    favoriteAddress.setCity("favoriteCity1");
+    favoriteAddress.setState("favoriteState1");
+    favoriteAddress.setCountry("favoriteCountry");
+
     favorite.setId(Long.valueOf("1"));
     favorite.setCreateAt(new Date());
     favorite.setUpdateAt(new Date());
@@ -55,11 +60,17 @@ public class FavoriteControllerTests {
         new CityEntity(Long.valueOf("1"), "cityname", "citystate", "citycountry", "citycoord");
     favorite.setCity(city);
 
-    AddressEmbedded userAddress =
-        new AddressEmbedded(
-            "userone1", "usertwo1", "userity1", "userstate1", "userpostalcode1", "usercountry1");
+    AddressEmbedded userAddress = new AddressEmbedded();
+    userAddress.setAddress1("userOne1");
+    userAddress.setAddress2("userTwo1");
+    userAddress.setCity("userCity1");
+    userAddress.setState("userState1");
+    userAddress.setPostalCode("123-1234");
+    userAddress.setCountry("userCountry");
+    Role admin = Role.ROLE_ADMIN;
 
-    var user = new UserEntity("name1", "email1", "password1", userAddress, favorite);
+    var user = new UserEntity("name1", "email1", "password1", userAddress, admin);
+    user.addFavorite(favorite);
     user.setId(Long.valueOf("1"));
     user.setCreateAt(new Date());
     user.setUpdateAt(new Date());

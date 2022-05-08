@@ -33,9 +33,9 @@ public class FavoriteEntity {
 
   @Embedded private AddressEmbedded address;
 
-  @ManyToOne private UserEntity user;
+  @NotNull @ManyToOne private UserEntity user;
 
-  @OneToOne private CityEntity city;
+  @NotNull @OneToOne private CityEntity city;
 
   @CreationTimestamp private Date createAt;
 
