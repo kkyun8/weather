@@ -2,17 +2,20 @@ package com.main.weather.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-@EnableWebSecurity
-// @RequiredArgsConstructor
+@EnableWebSecurity // Spring Filter Chainに登録
+@EnableGlobalMethodSecurity(securedEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Bean
@@ -28,20 +31,37 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     http.httpBasic().disable().csrf().disable();
-    http.authorizeRequests()
+    http.sessionManagement()
+        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        .and()
+        .formLogin()
+        .disable()
+        .httpBasic()
+        .disable()
+        .authorizeRequests()
         .antMatchers("/favorite/**")
         .authenticated()
-        .antMatchers(HttpMethod.POST, "/users/")
-        .permitAll()
-        .antMatchers(HttpMethod.GET, "/users")
-        .authenticated()
-        .antMatchers(HttpMethod.PUT, "/users")
-        .authenticated()
-        .antMatchers(HttpMethod.DELETE, "/users")
-        .authenticated()
+        .antMatchers("/users/**")
+        .access("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
         .antMatchers("/city/**")
         .access("hasRole('ROLE_ADMIN')")
         .anyRequest()
         .permitAll();
+  }
+
+  @Bean
+  public WebMvcConfigurer corsConfigurer() {
+    //    https://spring.pleiades.io/guides/gs/rest-service-cors/
+    return new WebMvcConfigurer() {
+      @Override
+      public void addCorsMappings(CorsRegistry registry) {
+        registry
+            .addMapping("/**")
+            .allowCredentials(true)
+            .allowedOriginPatterns("*")
+            .allowedHeaders("*")
+            .allowedMethods("*");
+      }
+    };
   }
 }
